@@ -1,0 +1,23 @@
+﻿@{
+    Layout = "_Layout";
+}
+
+<div class="container mt-5 text-center" style="max-width: 400px;">
+    <div class="card shadow p-4" style="background: rgba(255,255,255,0.95); border-radius: 15px;">
+        <h2 class="text-primary mb-3">🔒 Yönetici Girişi</h2>
+
+        @if (ViewBag.Error != null)
+        {
+            <div class="alert alert-danger">@ViewBag.Error</div>
+        }
+
+        <form method="post" action="/Admin/Login">
+            <div class="mb-3">
+                <input type="password" name="password" class="form-control form-control-lg text-center" placeholder="Şifreyi Girin" required />
+            </div>
+            <button type="submit" class="btn btn-primary btn-lg w-100">Giriş Yap 🚀</button>
+        </form>
+
+        <a href="/Quiz/Index" class="btn btn-link mt-3 text-muted">Oyuna Dön</a>
+    </div>
+</div>

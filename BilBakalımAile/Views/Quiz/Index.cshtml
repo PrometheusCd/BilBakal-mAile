@@ -1,0 +1,166 @@
+﻿@model BilBakalimAile.Models.Question
+
+<div class="container mt-5">
+
+    <div class="card quiz-card">
+
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+                <h2 class="fw-bold text-primary mb-0">Bil Bakalım Aile</h2>
+                <small class="text-muted">Soruları doğru bil, puanları topla!</small>
+            </div>
+
+            <div class="timer-container">
+                <span id="timer" class="h3 text-danger fw-bold m-0">15</span>
+            </div>
+        </div>
+
+        <div class="progress mb-4" style="height: 5px;">
+            <div class="progress-bar bg-primary" role="progressbar" style="width: 50%;"></div>
+        </div>
+
+        <div class="d-flex justify-content-center gap-3 mb-4">
+
+            <button type="button" id="joker50" onclick="useJoker50()"
+                    class="btn btn-warning fw-bold text-white rounded-pill px-4 shadow-sm @(ViewBag.Joker50Used == true ? "opacity-50" : "")"
+                    @(ViewBag.Joker50Used == true ? "disabled" : "")>
+                ✂️ %50
+            </button>
+
+            <button type="button" id="jokerAudience" onclick="useJokerAudience()"
+                    class="btn btn-info fw-bold text-white rounded-pill px-4 shadow-sm @(ViewBag.JokerAudienceUsed == true ? "opacity-50" : "")"
+                    @(ViewBag.JokerAudienceUsed == true ? "disabled" : "")>
+                👥 Seyirci
+            </button>
+        </div>
+
+        <div id="audience-stats" class="alert alert-secondary mb-4 p-3 shadow-sm" style="display: none; border-radius: 15px;">
+            <h6 class="fw-bold text-center mb-3">📊 Seyirci Oylaması Sonuçları</h6>
+            <div class="d-flex align-items-center mb-2"><span class="fw-bold me-2" style="width: 20px;">A</span><div class="progress flex-grow-1" style="height: 20px;"><div id="bar-A" class="progress-bar bg-success" style="width: 0%"></div></div></div>
+            <div class="d-flex align-items-center mb-2"><span class="fw-bold me-2" style="width: 20px;">B</span><div class="progress flex-grow-1" style="height: 20px;"><div id="bar-B" class="progress-bar bg-warning" style="width: 0%"></div></div></div>
+            <div class="d-flex align-items-center mb-2"><span class="fw-bold me-2" style="width: 20px;">C</span><div class="progress flex-grow-1" style="height: 20px;"><div id="bar-C" class="progress-bar bg-danger" style="width: 0%"></div></div></div>
+            <div class="d-flex align-items-center mb-2"><span class="fw-bold me-2" style="width: 20px;">D</span><div class="progress flex-grow-1" style="height: 20px;"><div id="bar-D" class="progress-bar bg-primary" style="width: 0%"></div></div></div>
+        </div>
+
+        <h3 class="text-center mb-4 fw-bold">@Model.Text</h3>
+
+        <form id="quizForm" action="/Quiz/Answer" method="post">
+            <input type="hidden" id="correctAnswerHidden" value="@Model.CorrectAnswer" />
+            <input type="hidden" name="selectedOption" id="selectedOptionInput" />
+
+            <div class="d-grid gap-3">
+                <button type="button" onclick="checkAnswer(this, 'A')" class="btn btn-option"><span class="badge bg-light text-dark me-2">A</span> @Model.OptionA</button>
+                <button type="button" onclick="checkAnswer(this, 'B')" class="btn btn-option"><span class="badge bg-light text-dark me-2">B</span> @Model.OptionB</button>
+                <button type="button" onclick="checkAnswer(this, 'C')" class="btn btn-option"><span class="badge bg-light text-dark me-2">C</span> @Model.OptionC</button>
+                <button type="button" onclick="checkAnswer(this, 'D')" class="btn btn-option"><span class="badge bg-light text-dark me-2">D</span> @Model.OptionD</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<audio id="audioCorrect" src="/sounds/correct.mp3" preload="auto"></audio>
+<audio id="audioWrong" src="/sounds/wrong.mp3" preload="auto"></audio>
+<audio id="audioTimeUp" src="/sounds/timeup.mp3" preload="auto"></audio>
+
+<script>
+    var timeLeft = 15;
+    var timerElement = document.getElementById("timer");
+    var isAnswered = false;
+
+    var countdown = setInterval(function() {
+        if(isAnswered) { clearInterval(countdown); return; }
+        timeLeft--;
+        timerElement.innerText = timeLeft;
+        if(timeLeft <= 5) timerElement.classList.add("text-danger");
+
+        if (timeLeft <= 0) {
+            clearInterval(countdown);
+            var audio = document.getElementById("audioTimeUp");
+            if(audio) audio.play();
+            setTimeout(function() { window.location.href = "/Quiz/TimeUp"; }, 1500);
+        }
+    }, 1000);
+
+    function checkAnswer(btnElement, choice) {
+        if (isAnswered) return;
+        isAnswered = true;
+        var correct = document.getElementById("correctAnswerHidden").value;
+        document.getElementById("selectedOptionInput").value = choice;
+
+        var audioCorrect = document.getElementById("audioCorrect");
+        var audioWrong = document.getElementById("audioWrong");
+
+        if (choice == correct) {
+            btnElement.classList.add("btn-success");
+            btnElement.classList.remove("btn-option");
+            if(audioCorrect) audioCorrect.play();
+        } else {
+            btnElement.classList.add("btn-danger");
+            btnElement.classList.remove("btn-option");
+            if(audioWrong) audioWrong.play();
+        }
+        setTimeout(function() { document.getElementById("quizForm").submit(); }, 1500);
+    }
+
+    // --- JOKERLER (GÜNCELLENDİ) ---
+
+    function useJoker50() {
+        var btn50 = document.getElementById("joker50");
+        if (btn50.disabled || isAnswered) return;
+
+        // 1. Görsel olarak kilitle
+        btn50.disabled = true;
+        btn50.classList.add("opacity-50");
+
+        // 2. Sunucuya haber ver (Arka planda kaydet)
+        fetch('/Quiz/UseJoker?jokerType=50', { method: 'POST' });
+
+        // 3. İşlemi yap
+        var correct = document.getElementById("correctAnswerHidden").value;
+        var options = ['A', 'B', 'C', 'D'];
+        var wrongOptions = options.filter(o => o !== correct);
+
+        var remove1 = wrongOptions[Math.floor(Math.random() * wrongOptions.length)];
+        var remaining = wrongOptions.filter(o => o !== remove1);
+        var remove2 = remaining[Math.floor(Math.random() * remaining.length)];
+
+        var buttons = document.querySelectorAll(".btn-option");
+        var map = {'A':0, 'B':1, 'C':2, 'D':3};
+
+        if(buttons[map[remove1]]) buttons[map[remove1]].style.visibility = "hidden";
+        if(buttons[map[remove2]]) buttons[map[remove2]].style.visibility = "hidden";
+    }
+
+    function useJokerAudience() {
+        var btn = document.getElementById("jokerAudience");
+        if (btn.disabled || isAnswered) return;
+
+        // 1. Görsel olarak kilitle
+        btn.disabled = true;
+        btn.classList.add("opacity-50");
+
+        // 2. Sunucuya haber ver
+        fetch('/Quiz/UseJoker?jokerType=Audience', { method: 'POST' });
+
+        // 3. İşlemi yap
+        var correct = document.getElementById("correctAnswerHidden").value;
+        var statsDiv = document.getElementById("audience-stats");
+        if(statsDiv) statsDiv.style.display = "block";
+
+        var rates = { 'A': 0, 'B': 0, 'C': 0, 'D': 0 };
+        var remaining = 30;
+        rates[correct] = 70;
+
+        var options = ['A', 'B', 'C', 'D'].filter(o => o !== correct);
+        var share1 = Math.floor(Math.random() * remaining);
+        rates[options[0]] = share1; remaining -= share1;
+        var share2 = Math.floor(Math.random() * remaining);
+        rates[options[1]] = share2; remaining -= share2;
+        rates[options[2]] = remaining;
+
+        document.getElementById("bar-A").style.width = rates['A'] + "%"; document.getElementById("bar-A").innerText = rates['A'] + "%";
+        document.getElementById("bar-B").style.width = rates['B'] + "%"; document.getElementById("bar-B").innerText = rates['B'] + "%";
+        document.getElementById("bar-C").style.width = rates['C'] + "%"; document.getElementById("bar-C").innerText = rates['C'] + "%";
+        document.getElementById("bar-D").style.width = rates['D'] + "%"; document.getElementById("bar-D").innerText = rates['D'] + "%";
+    }
+</script>

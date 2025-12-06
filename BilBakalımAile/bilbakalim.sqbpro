@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?><sqlb_project><db path="bilbakalim.db" readonly="0" foreign_keys="1" case_sensitive_like="0" temp_store="0" wal_autocheckpoint="1000" synchronous="2"/><attached/><window><main_tabs open="structure browser pragmas query" current="3"/></window><tab_structure><column_width id="0" width="300"/><column_width id="1" width="0"/><column_width id="2" width="100"/><column_width id="3" width="1683"/><column_width id="4" width="0"/><expanded_item id="0" parent="1"/><expanded_item id="1" parent="1"/><expanded_item id="2" parent="1"/><expanded_item id="3" parent="1"/></tab_structure><tab_browse><table title="Questions" custom_title="0" dock_id="3" table="4,9:mainQuestions"/><dock_state state="000000ff00000000fd00000001000000020000022e0000020bfc0100000001fc000000000000022e0000011b00fffffffa000000030100000004fb000000160064006f0063006b00420072006f00770073006500340000000000ffffffff0000000000000000fb000000160064006f0063006b00420072006f00770073006500310000000000ffffffff0000000000000000fb000000160064006f0063006b00420072006f00770073006500320000000000ffffffff0000000000000000fb000000160064006f0063006b00420072006f00770073006500330100000000ffffffff0000011b00ffffff0000022e0000000000000004000000040000000800000008fc00000000"/><default_encoding codec=""/><browse_table_settings><table schema="main" name="Questions" show_row_id="0" encoding="" plot_x_axis="" unlock_view_pk="_rowid_" freeze_columns="0"><sort/><column_widths><column index="1" value="29"/><column index="2" value="300"/><column index="3" value="70"/><column index="4" value="54"/><column index="5" value="53"/><column index="6" value="54"/><column index="7" value="90"/></column_widths><filter_values/><conditional_formats><column index="2"/></conditional_formats><row_id_formats/><display_formats/><hidden_columns/><plot_y_axes/><global_filter/></table></browse_table_settings></tab_browse><tab_sql><sql name="SQL 1*">-- Eğer eski sorular varsa önce temizle (Çift olmasın)
+DELETE FROM Questions;
+
+-- Yeni soruları ekle
+INSERT INTO Questions (Text, OptionA, OptionB, OptionC, OptionD, CorrectAnswer) VALUES
+('Türkiye''nin başkenti neresidir?', 'İstanbul', 'Ankara', 'İzmir', 'Bursa', 'B'),
+('Web sayfalarını renklendirmek için hangisi kullanılır?', 'HTML', 'CSS', 'SQL', 'C#', 'B'),
+('Hangisi bir programlama dili değildir?', 'Python', 'Java', 'Excel', 'C++', 'C'),
+('Dünya''nın uydusu hangisidir?', 'Güneş', 'Mars', 'Ay', 'Venüs', 'C'),
+('Futbol maçı kaç kişiyle oynanır (bir takım)?', '10', '11', '12', '7', 'B'),
+('Hangi hayvan kış uykusuna yatar?', 'Ayı', 'Kedi', 'Köpek', 'At', 'A'),
+('Suyun kaynama noktası kaç derecedir?', '90', '100', '120', '80', 'B'),
+('Gökkuşağında kaç renk vardır?', '5', '6', '7', '8', 'C'),
+('En hızlı koşan kara hayvanı hangisidir?', 'Aslan', 'Kaplan', 'Çita', 'At', 'C'),
+('Hangi gezegen &quot;Kızıl Gezegen&quot; olarak bilinir?', 'Mars', 'Jüpiter', 'Venüs', 'Satürn', 'A'),
+('İstiklal Marşı''mızın şairi kimdir?', 'Namık Kemal', 'Orhan Veli', 'Mehmet Akif Ersoy', 'Ziya Gökalp', 'C'),
+('Bir yılda kaç hafta vardır?', '48', '50', '52', '54', 'C'),
+('Bilgisayarın beyni olarak bilinen parça hangisidir?', 'RAM', 'Harddisk', 'Ekran Kartı', 'İşlemci (CPU)', 'D'),
+('Arda''nın bu oyunu yaparken en çok kullandığı şey nedir?', 'Klavye', 'Fare', 'Sabır', 'Hepsi', 'D');</sql><current_tab id="0"/></tab_sql></sqlb_project>
