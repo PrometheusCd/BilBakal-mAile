@@ -1,6 +1,6 @@
 ﻿# 1. AŞAMA: Kodları Hazırlama (Build)
-# .NET 8.0 SDK'sını kullanıyoruz
-FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
+# .NET 10.0 SDK'sını kullanıyoruz (GÜNCELLENDİ)
+FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
 WORKDIR /app
 
 # Proje dosyasını kopyala ve gerekli paketleri indir
@@ -14,14 +14,15 @@ COPY . ./
 RUN dotnet publish -c Release -o out
 
 # 2. AŞAMA: Çalıştırma (Runtime)
-# Sadece çalıştırıcıyı (ASP.NET Core Runtime) içeren daha hafif bir imaj kullanıyoruz
-FROM mcr.microsoft.com/dotnet/aspnet:8.0
+# .NET 10.0 Runtime imajını kullanıyoruz (GÜNCELLENDİ)
+FROM mcr.microsoft.com/dotnet/aspnet:10.0
 WORKDIR /app
 
 # Derlenmiş dosyaları önceki aşamadan al
 COPY --from=build /app/out .
 
 # Veritabanı dosyasını da kopyala (Soruların olduğu dosya)
+# DİKKAT: Eğer projenin içinde "bilbakalim.db" dosyası yoksa bu satır hata verir.
 COPY bilbakalim.db .
 
 # Render.com gibi siteler için port ayarı
@@ -29,5 +30,4 @@ ENV ASPNETCORE_URLS=http://+:8080
 EXPOSE 8080
 
 # Uygulamayı başlat
-# DİKKAT: Proje ismin farklıysa burayı düzelt!
 ENTRYPOINT ["dotnet", "BilBakalimAile.dll"]
