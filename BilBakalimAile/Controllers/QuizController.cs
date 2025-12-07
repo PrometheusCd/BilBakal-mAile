@@ -1,16 +1,20 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using BilBakalimAile.Services;
 using BilBakalimAile.Models;
+using BilBakalimAile.Data; // Veritabanı için gerekli
 
 namespace BilBakalimAile.Controllers
 {
     public class QuizController : Controller
     {
         private readonly QuizService _quizService;
+        private readonly QuizDbContext _context; // Veritabanı bağlantısı
 
-        public QuizController(QuizService quizService)
+        // Hem Servisi hem de Veritabanını çağırıyoruz
+        public QuizController(QuizService quizService, QuizDbContext context)
         {
             _quizService = quizService;
+            _context = context;
         }
 
         public IActionResult Index()
@@ -23,11 +27,9 @@ namespace BilBakalimAile.Controllers
                 return RedirectToAction("Final");
             }
 
-            // --- JOKER KONTROLÜ (YENİ) ---
-            // Session'a bakıyoruz: Daha önce kullanıldı mı?
+            // Joker Kontrolü
             ViewBag.Joker50Used = HttpContext.Session.GetString("Joker50") == "Used";
             ViewBag.JokerAudienceUsed = HttpContext.Session.GetString("JokerAudience") == "Used";
-            // -----------------------------
 
             var currentQuestion = questions[currentIndex];
             return View(currentQuestion);
@@ -48,7 +50,6 @@ namespace BilBakalimAile.Controllers
             }
 
             HttpContext.Session.SetInt32("CurrentIndex", currentIndex + 1);
-
             return RedirectToAction("Index");
         }
 
@@ -59,30 +60,62 @@ namespace BilBakalimAile.Controllers
             return RedirectToAction("Index");
         }
 
-        // --- YENİ EKLENEN JOKER KAYIT METODU ---
         [HttpPost]
         public IActionResult UseJoker(string jokerType)
         {
-            // JavaScript buraya istek atacak: "50" veya "Audience"
             HttpContext.Session.SetString("Joker" + jokerType, "Used");
             return Ok();
         }
-        // ---------------------------------------
 
         public IActionResult Final()
         {
             int score = HttpContext.Session.GetInt32("Score") ?? 0;
             ViewBag.TotalScore = score;
 
-            // Oyun bitince her şeyi sıfırla
+            // Oyun bitince oturumu sıfırlıyoruz ama skor kaydetmek için session'ı temizlemiyoruz
+            // Sadece index'i sıfırlıyoruz ki "Tekrar Oyna" diyebilsin
             HttpContext.Session.SetInt32("CurrentIndex", 0);
-            HttpContext.Session.SetInt32("Score", 0);
 
-            // Jokerleri de sıfırla ki yeni oyunda tekrar kullanabilsinler
+            // Jokerleri sıfırla
             HttpContext.Session.Remove("Joker50");
             HttpContext.Session.Remove("JokerAudience");
 
             return View();
+        }
+
+        // --- YENİ EKLENEN: SKOR KAYDETME VE LİSTELEME ---
+
+        [HttpPost]
+        public IActionResult SaveScore(string playerName)
+        {
+            int score = HttpContext.Session.GetInt32("Score") ?? 0;
+
+            var newScore = new Score
+            {
+                PlayerName = playerName,
+                Points = score,
+                Date = DateTime.Now
+            };
+
+            _context.Scores.Add(newScore);
+            _context.SaveChanges();
+
+            // Puanı da artık silebiliriz
+            HttpContext.Session.SetInt32("Score", 0);
+
+            return RedirectToAction("Leaderboard");
+        }
+
+        public IActionResult Leaderboard()
+        {
+            // En yüksek puana göre ilk 10 kişiyi getir
+            var topScores = _context.Scores
+                .OrderByDescending(s => s.Points)
+                .ThenByDescending(s => s.Date)
+                .Take(10)
+                .ToList();
+
+            return View(topScores);
         }
     }
 }

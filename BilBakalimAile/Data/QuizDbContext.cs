@@ -11,5 +11,7 @@ namespace BilBakalimAile.Data
 
         // Veritabanındaki "Sorular" tablosu
         public DbSet<Question> Questions { get; set; }
+
+        public DbSet<Score> Scores { get; set; }
     }
 }

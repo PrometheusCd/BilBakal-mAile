@@ -1,0 +1,67 @@
+﻿@model List<BilBakalimAile.Models.Score>
+
+<div class="container mt-5" style="max-width: 600px;">
+    <div class="text-center mb-4">
+        <h2 class="fw-bold text-warning">🏆 Şampiyonlar Ligi 🏆</h2>
+        <p class="text-white-50">En yüksek puanı alan efsane aile üyeleri!</p>
+    </div>
+
+    <div class="card shadow border-0" style="border-radius: 15px; overflow: hidden;">
+        <table class="table table-striped table-hover mb-0 text-center">
+            <thead class="bg-primary text-white">
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Oyuncu</th>
+                    <th scope="col">Puan</th>
+                    <th scope="col">Tarih</th>
+                </tr>
+            </thead>
+            <tbody>
+                @{
+                    int rank = 1;
+                }
+                @foreach (var score in Model)
+                {
+                    <tr class="@(rank == 1 ? "table-warning fw-bold" : "")">
+                        <td>
+                            @if (rank == 1)
+                            {
+                                <span>🥇</span>
+                            }
+                            else if (rank == 2)
+                            {
+
+                                <span>🥈</span>
+                            }
+                            else if (rank == 3)
+                            {
+
+                                <span>🥉</span>
+                            }
+                            else
+                            {
+
+                                @rank
+                            }
+                        </td>
+                        <td>@score.PlayerName</td>
+                        <td class="fw-bold text-success">@score.Points</td>
+                        <td class="text-muted small">@score.Date.ToString("dd.MM.yyyy")</td>
+                    </tr>
+                    rank++;
+                }
+
+                @if (Model.Count == 0)
+                {
+                    <tr>
+                        <td colspan="4" class="p-4 text-muted">Henüz kimse skor kaydetmedi. İlk sen ol! 🚀</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    <div class="text-center mt-4">
+        <a href="/Quiz/Index" class="btn btn-light btn-lg fw-bold shadow-sm">🎮 Yeni Oyun Başlat</a>
+    </div>
+</div>

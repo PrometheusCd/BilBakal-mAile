@@ -8,49 +8,55 @@ html {
     }
 }
 
+/* --- KRÝTÝK DÜZELTME: Sabit Yükseklik Yerine Esnek Yükseklik --- */
 html, body {
-    height: 100%;
+    min-height: 100vh; /* Ekran kadar olsun ama içerik artarsa uzasýn */
+    margin: 0;
+    padding: 0;
 }
 
-/* --- ANA GÖVDE TASARIMI (MODERN LACÝVERT) --- */
 body {
-    /* Eski mor yerine Derin Lacivert (Navy) Gradient */
-    /* #141E30 (Çok koyu lacivert) -> #243B55 (Metalik lacivert) */
     background: linear-gradient(135deg, #141E30 0%, #243B55 100%);
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     color: #333;
     display: flex;
-    flex-direction: column;
+    flex-direction: column; /* Ýçeriði dikey sýrala */
 }
 
-/* Alt kýsýmdaki footer çizgisini ve yazýsýný uyumlu yapalým */
+/* Ýçerik kýsmýna (main) esneme payý veriyoruz, böylece footer en alta itilir */
+main {
+    flex: 1;
+}
+
 .border-top {
     border-top: 1px solid rgba(255, 255, 255, 0.15) !important;
 }
 
 .footer {
     color: rgba(255, 255, 255, 0.6);
+    background-color: rgba(0, 0, 0, 0.2); /* Arka plana hafif koyuluk ki yazý okunsun */
+    padding: 20px 0;
+    width: 100%;
 }
 
 /* --- KART TASARIMI --- */
 .quiz-card {
-    background: rgba(255, 255, 255, 0.98); /* Neredeyse tam beyaz */
+    background: rgba(255, 255, 255, 0.98);
     border-radius: 20px;
-    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5); /* Gölgeyi biraz daha belirgin yaptýk */
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
     padding: 30px;
     border: none;
     max-width: 700px;
-    margin: 0 auto;
+    margin: 20px auto; /* Kartýn altýna ve üstüne boþluk eklendi */
 }
 
-/* --- BUTON TASARIMI (Temaya Uygun Mavi) --- */
+/* --- BUTON TASARIMI --- */
 .btn-option {
     border-radius: 50px;
     padding: 15px 25px;
     font-size: 1.2rem;
     font-weight: 600;
     transition: all 0.3s ease;
-    /* Yeni Tema Rengi: #243B55 (Koyu Mavi) */
     border: 2px solid #243B55;
     color: #243B55;
     background-color: white;
@@ -59,24 +65,21 @@ body {
     overflow: hidden;
 }
 
-    /* Mouse ile üzerine gelince */
     .btn-option:hover {
-        background-color: #243B55; /* Buton içi lacivert olsun */
+        background-color: #243B55;
         color: white;
         transform: translateY(-3px);
-        box-shadow: 0 5px 15px rgba(36, 59, 85, 0.4); /* Lacivert gölge */
+        box-shadow: 0 5px 15px rgba(36, 59, 85, 0.4);
     }
 
-/* Doðru Cevap (Yeþil - Aynen kalabilir veya pastel yapýlabilir) */
 .btn-success {
-    background-color: #059669 !important; /* Biraz daha modern zümrüt yeþili */
+    background-color: #059669 !important;
     border-color: #059669 !important;
     color: white !important;
 }
 
-/* Yanlýþ Cevap (Kýrmýzý) */
 .btn-danger {
-    background-color: #dc2626 !important; /* Daha tok bir kýrmýzý */
+    background-color: #dc2626 !important;
     border-color: #dc2626 !important;
     color: white !important;
 }
@@ -91,6 +94,12 @@ body {
     justify-content: center;
     align-items: center;
     box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-    border: 4px solid #ef4444; /* Sayaç çerçevesi kýrmýzý kalsýn, dikkat çeker */
+    border: 4px solid #ef4444;
     margin-left: auto;
+}
+
+/* Joker Butonlarý Ýçin Opasite (Kullanýlýnca soluklaþmasý için) */
+.opacity-50 {
+    opacity: 0.5 !important;
+    cursor: not-allowed;
 }

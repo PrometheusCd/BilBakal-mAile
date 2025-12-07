@@ -1,10 +1,10 @@
 ﻿<div class="text-center mt-5">
-    <h1 class="display-4 text-primary">Oyun Bitti! 🏁</h1>
+    <h1 class="display-4 text-primary fw-bold">Oyun Bitti! 🏁</h1>
     <hr />
 
-    <div class="card mx-auto mt-4" style="width: 18rem;">
+    <div class="card mx-auto mt-4 quiz-card" style="width: 22rem;">
         <div class="card-body">
-            <h5 class="card-title">Toplam Puanın</h5>
+            <h5 class="card-title text-muted">Toplam Puanın</h5>
             <p class="card-text display-1 fw-bold text-success">
                 @if (ViewBag.TotalScore != null)
                 {
@@ -15,13 +15,21 @@
                     <span>0</span>
                 }
             </p>
+
+            <hr class="my-4">
+            <h5 class="mb-3">Skorunu Tabloya Yazdır! 🏆</h5>
+
+            <form action="/Quiz/SaveScore" method="post">
+                <div class="input-group mb-3">
+                    <input type="text" name="playerName" class="form-control form-control-lg" placeholder="Adın nedir?" required maxlength="15">
+                    <button class="btn btn-success btn-lg" type="submit">Kaydet</button>
+                </div>
+            </form>
         </div>
     </div>
 
     <div class="mt-4">
-        <p class="lead">Yeniden şansını denemek ister misin?</p>
-        <a href="/Quiz/Index" class="btn btn-primary btn-lg">
-            🔄 Tekrar Oyna
-        </a>
+        <a href="/Quiz/Index" class="btn btn-outline-primary btn-lg me-2">🔄 Tekrar Oyna</a>
+        <a href="/Quiz/Leaderboard" class="btn btn-outline-warning btn-lg">🏅 Tabloyu Gör</a>
     </div>
 </div>
