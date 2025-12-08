@@ -1,0 +1,56 @@
+﻿@model List<BilBakalimAile.Models.Question>
+
+<div class="container mt-4">
+    <div class="text-center mb-5">
+        <h1 class="display-5 fw-bold text-white">📡 Canlı Yayın Kumandası</h1>
+        <p class="text-white-50">Buradan bir soru seç ve herkese aynı anda gönder!</p>
+        <a href="/Admin/Index" class="btn btn-outline-light btn-sm">Geri Dön</a>
+    </div>
+
+    <div class="row">
+        @foreach (var q in Model)
+        {
+            <div class="col-md-6 mb-3">
+                <div class="card shadow border-0 h-100" style="border-radius: 15px;">
+                    <div class="card-body d-flex flex-column justify-content-between">
+                        <h5 class="card-title text-dark">@q.Text</h5>
+                        <div class="d-grid gap-2 mt-3">
+                            <button onclick="broadcastQuestion(@q.Id, this)" class="btn btn-primary btn-lg fw-bold">
+                                📡 YAYINLA
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+<script>
+    function broadcastQuestion(id, btn) {
+        // Butonu geçici olarak devre dışı bırak (Çift tıklamayı önlemek için)
+        var originalText = btn.innerText;
+        btn.disabled = true;
+        btn.innerText = "Gönderiliyor...";
+        btn.classList.remove("btn-primary");
+        btn.classList.add("btn-warning");
+
+        // Sunucuya isteği at
+        fetch('/Admin/PublishQuestion/' + id)
+            .then(response => {
+                if (response.ok) {
+                    btn.innerText = "✅ YAYINLANDI";
+                    btn.classList.remove("btn-warning");
+                    btn.classList.add("btn-success");
+
+                    // 2 saniye sonra eski haline dön
+                    setTimeout(() => {
+                        btn.disabled = false;
+                        btn.innerText = originalText;
+                        btn.classList.remove("btn-success");
+                        btn.classList.add("btn-primary");
+                    }, 2000);
+                }
+            });
+    }
+</script>
